@@ -3,7 +3,7 @@ use App\Http\Controllers\AuthenticationController;
 use App\Http\Controllers\CategoryController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
-
+use App\Http\Controllers\FavoriteController;
 /*
 |--------------------------------------------------------------------------
 | API Routes
@@ -27,5 +27,12 @@ Route::post('/login', [AuthenticationController::class, 'login']);
 
 Route::group(['middleware' => ['auth:sanctum']], function () {
     
+
+    Route::get('/favorites', [FavoriteController::class, 'index']);
+    Route::post('/favorites', [FavoriteController::class, 'store']);
+    Route::delete('/favorites/{favorite}', [FavoriteController::class, 'destroy']);
+
+
+
     Route::post('/logout', [AuthenticationController::class, 'logout']);
 });
