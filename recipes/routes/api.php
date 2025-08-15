@@ -4,6 +4,7 @@ use App\Http\Controllers\CategoryController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\FavoriteController;
+use App\Http\Controllers\RecipeController;
 /*
 |--------------------------------------------------------------------------
 | API Routes
@@ -22,11 +23,21 @@ Route::middleware(['auth:sanctum'])->get('/user', function (Request $request) {
 Route::get('/categories', [CategoryController::class, 'index']);
 Route::get('/categories/{id}', [CategoryController::class, 'show']);
 
+Route::get('/recipes', [RecipeController::class, 'index']);
+Route::get('/recipes/{id}', [RecipeController::class, 'show']);
+
 Route::post('/register', [AuthenticationController::class, 'register']);
 Route::post('/login', [AuthenticationController::class, 'login']);
 
 Route::group(['middleware' => ['auth:sanctum']], function () {
     
+    Route::resource('categories', CategoryController::class)
+    ->only(['store', 'update', 'destroy']);
+
+    Route::resource('recipes', RecipeController::class)
+    ->only(['store', 'update', 'destroy']);
+
+
 
     Route::get('/favorites', [FavoriteController::class, 'index']);
     Route::post('/favorites', [FavoriteController::class, 'store']);
