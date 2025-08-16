@@ -25,6 +25,7 @@ Route::get('/categories', [CategoryController::class, 'index']);
 Route::get('/categories/{id}', [CategoryController::class, 'show']);
 
 Route::get('/recipes', [RecipeController::class, 'index']);
+Route::get('/recipes/search', [RecipeController::class, 'search']);
 Route::get('/recipes/{id}', [RecipeController::class, 'show']);
 
 Route::post('/register', [AuthenticationController::class, 'register']);

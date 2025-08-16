@@ -48,6 +48,43 @@ class RecipeController extends Controller
         ]);
     }
 
+    public function search(Request $request)
+    {
+        $q = $request->query('query');
+        if (!$q) {
+            return response()->json(['error' => 'Search query is required.'], 400);
+        }
+
+        $builder = Recipe::with(['user', 'category'])
+            ->where(function ($query) use ($q) {
+                $query->where('title', 'like', "%{$q}%")
+                    ->orWhere('description', 'like', "%{$q}%")
+                    ->orWhere('ingredients', 'like', "%{$q}%")
+                    ->orWhere('instructions', 'like', "%{$q}%")
+                    ->orWhereHas('category', function ($sub) use ($q) {
+                        $sub->where('name', 'like', "%{$q}%");
+                    });
+            });
+
+        $sort = strtolower($request->query('sort_title', ''));
+        if (in_array($sort, ['asc', 'desc'], true)) {
+            $builder->orderBy('title', $sort);
+        }
+
+        $perPage = (int) $request->query('per_page', 10);
+        $page    = (int) $request->query('page', 1);
+
+        $recipes = $builder->paginate($perPage, ['*'], 'page', $page);
+
+        if ($recipes->isEmpty()) {
+            return response()->json(['message' => 'No matching recipes found.'], 404);
+        }
+
+        return response()->json([
+            'recipes' => RecipeResource::collection($recipes),
+        ]);
+    }
+   
     /**
      * Show the form for creating a new resource.
      */
