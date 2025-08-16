@@ -85,6 +85,45 @@ class RecipeController extends Controller
         ]);
     }
    
+     public function exportCsv()
+    {
+        $filename = 'recipes_' . now()->format('Ymd_His') . '.csv';
+
+        $headers = [
+            'Content-Type'        => 'text/csv',
+            'Content-Disposition' => "attachment; filename=\"$filename\"",
+        ];
+
+        $callback = function () {
+            $out = fopen('php://output', 'w');
+
+            fputcsv($out, ['ID', 'Title', 'Description', 'Ingredients', 'Instructions', 'Category', 'Author', 'Author Email', 'Created At']);
+
+            Recipe::with(['category:id,name', 'user:id,name,email'])
+                ->select(['id', 'title', 'description', 'ingredients', 'instructions', 'category_id', 'user_id', 'created_at'])
+                ->orderBy('id')
+                ->chunk(1000, function ($rows) use ($out) {
+                    foreach ($rows as $r) {
+                        fputcsv($out, [
+                            $r->id,
+                            $r->title,
+                            $r->description,
+                            $r->ingredients,
+                            $r->instructions,
+                            optional($r->category)->name,
+                            optional($r->user)->name,
+                            optional($r->user)->email,
+                            $r->created_at?->toDateTimeString(),
+                        ]);
+                    }
+                });
+
+            fclose($out);
+        };
+
+        return response()->stream($callback, 200, $headers);
+    }
+    
     /**
      * Show the form for creating a new resource.
      */
