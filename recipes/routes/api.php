@@ -3,6 +3,7 @@ use App\Http\Controllers\AuthenticationController;
 use App\Http\Controllers\CategoryController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\KetoRecipes;
 use App\Http\Controllers\FavoriteController;
 use App\Http\Controllers\RecipeController;
 /*
@@ -31,6 +32,9 @@ Route::post('/login', [AuthenticationController::class, 'login']);
 
 Route::group(['middleware' => ['auth:sanctum']], function () {
     
+    Route::get("/keto/categories", [KetoRecipes::class, 'categories']);
+    Route::get("/keto/recipes", [KetoRecipes::class, 'recipesByCategory']);
+
     Route::resource('categories', CategoryController::class)
     ->only(['store', 'update', 'destroy']);
 

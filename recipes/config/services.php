@@ -31,4 +31,9 @@ return [
         'region' => env('AWS_DEFAULT_REGION', 'us-east-1'),
     ],
 
+     'keto' => [
+        'base_url' => env('KETO_BASE_URL', 'https://keto-diet.p.rapidapi.com'),
+        'host'     => env('RAPIDAPI_HOST', 'keto-diet.p.rapidapi.com'),
+        'key'      => env('RAPIDAPI_KEY'),
+    ],
 ];
