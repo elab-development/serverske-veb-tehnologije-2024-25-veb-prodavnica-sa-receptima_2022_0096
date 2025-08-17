@@ -7,6 +7,7 @@ use App\Http\Controllers\KetoRecipes;
 use App\Http\Controllers\FavoriteController;
 use App\Http\Controllers\RecipeController;
 use App\Http\Controllers\UserController;
+use App\Http\Controllers\HealthController;
 /*
 |--------------------------------------------------------------------------
 | API Routes
@@ -55,3 +56,5 @@ Route::group(['middleware' => ['auth:sanctum']], function () {
 
     Route::post('/logout', [AuthenticationController::class, 'logout']);
 });
+
+Route::get('/ping', [HealthController::class, 'ping']);
