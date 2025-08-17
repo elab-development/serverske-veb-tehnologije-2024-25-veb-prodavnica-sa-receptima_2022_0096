@@ -6,6 +6,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\KetoRecipes;
 use App\Http\Controllers\FavoriteController;
 use App\Http\Controllers\RecipeController;
+use App\Http\Controllers\UserController;
 /*
 |--------------------------------------------------------------------------
 | API Routes
@@ -50,7 +51,7 @@ Route::group(['middleware' => ['auth:sanctum']], function () {
     Route::post('/favorites', [FavoriteController::class, 'store']);
     Route::delete('/favorites/{favorite}', [FavoriteController::class, 'destroy']);
 
-
+    Route::get('/users/{id}/favorites', [UserController::class, 'favorites']);
 
     Route::post('/logout', [AuthenticationController::class, 'logout']);
 });
