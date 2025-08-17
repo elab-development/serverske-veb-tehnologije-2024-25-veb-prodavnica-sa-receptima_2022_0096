@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Http\Resources\CategoryResource;
 use App\Models\Category;
+use App\Http\Resources\RecipeResource;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
@@ -21,6 +22,21 @@ class CategoryController extends Controller
 
         return response()->json([
             'categories' => CategoryResource::collection($categories),
+        ]);
+    }
+
+     public function recipes($id)
+    {
+        $category = Category::with('recipes.user')
+            ->find($id);
+
+        if (!$category) {
+            return response()->json(['message' => 'Category not found'], 404);
+        }
+
+        return response()->json([
+            'category' => $category->name,
+            'recipes' => RecipeResource::collection($category->recipes)
         ]);
     }
 
