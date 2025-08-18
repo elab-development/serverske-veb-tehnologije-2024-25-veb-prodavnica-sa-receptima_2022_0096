@@ -10,7 +10,38 @@ use Illuminate\Support\Facades\Auth;
 class FavoriteController extends Controller
 {
     /**
-     * Display a listing of the resource.
+      * @OA\Get(
+     *     path="/api/favorites",
+     *     tags={"Favorites"},
+     *     summary="List favorites for current user (admins see all)",
+     *     security={{"bearerAuth":{}}},
+     *     @OA\Response(
+     *         response=200,
+     *         description="OK",
+     *         @OA\JsonContent(
+     *             type="object",
+     *             @OA\Property(
+     *                 property="favorites",
+     *                 type="array",
+     *                 @OA\Items(
+     *                     type="object",
+     *                     @OA\Property(property="id", type="integer", example=10),
+     *                     @OA\Property(property="user", type="object",
+     *                         @OA\Property(property="id", type="integer", example=3),
+     *                         @OA\Property(property="name", type="string", example="Jane Doe"),
+     *                         @OA\Property(property="email", type="string", example="jane@example.com")
+     *                     ),
+     *                     @OA\Property(property="recipe", type="object",
+     *                         @OA\Property(property="id", type="integer", example=42),
+     *                         @OA\Property(property="title", type="string", example="Keto Omelette"),
+     *                         @OA\Property(property="description", type="string", example="Eggs, cheese...")
+     *                     )
+     *                 )
+     *             )
+     *         )
+     *     ),
+     *     @OA\Response(response=404, description="No favorites found.")
+     * )
      */
     public function index()
     {
@@ -38,7 +69,41 @@ class FavoriteController extends Controller
     }
 
     /**
-     * Store a newly created resource in storage.
+      * @OA\Post(
+     *     path="/api/favorites",
+     *     tags={"Favorites"},
+     *     summary="Add a recipe to the current user's favorites (users only)",
+     *     security={{"bearerAuth":{}}},
+     *     @OA\RequestBody(
+     *         required=true,
+     *         @OA\JsonContent(
+     *             required={"recipe_id"},
+     *             @OA\Property(property="recipe_id", type="integer", example=42)
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=200,
+     *         description="Favorite added",
+     *         @OA\JsonContent(
+     *             type="object",
+     *             @OA\Property(property="message", type="string", example="Favorite added successfully"),
+     *             @OA\Property(property="favorite", type="object",
+     *                 @OA\Property(property="id", type="integer", example=11),
+     *                 @OA\Property(property="user", type="object",
+     *                     @OA\Property(property="id", type="integer", example=3),
+     *                     @OA\Property(property="name", type="string", example="Jane Doe")
+     *                 ),
+     *                 @OA\Property(property="recipe", type="object",
+     *                     @OA\Property(property="id", type="integer", example=42),
+     *                     @OA\Property(property="title", type="string", example="Keto Omelette")
+     *                 )
+     *             )
+     *         )
+     *     ),
+     *     @OA\Response(response=403, description="Only users can create favorites"),
+     *     @OA\Response(response=409, description="Recipe already in favorites"),
+     *     @OA\Response(response=422, description="Validation error")
+     * )
      */
     public function store(Request $request)
     {
@@ -95,7 +160,26 @@ class FavoriteController extends Controller
     }
 
     /**
-     * Remove the specified resource from storage.
+    * @OA\Delete(
+     *     path="/api/favorites/{id}",
+     *     tags={"Favorites"},
+     *     summary="Remove a favorite (only the owner, role=user)",
+     *     security={{"bearerAuth":{}}},
+     *     @OA\Parameter(
+     *         name="id", in="path", required=true, description="Favorite ID",
+     *         @OA\Schema(type="integer")
+     *     ),
+     *     @OA\Response(
+     *         response=200,
+     *         description="Favorite removed",
+     *         @OA\JsonContent(
+     *             type="object",
+     *             @OA\Property(property="message", type="string", example="Favorite removed successfully")
+     *         )
+     *     ),
+     *     @OA\Response(response=403, description="Only users can delete favorites / You can only delete your own favorites"),
+     *     @OA\Response(response=404, description="Favorite not found")
+     * )
      */
     public function destroy(Favorite $favorite)
     {
