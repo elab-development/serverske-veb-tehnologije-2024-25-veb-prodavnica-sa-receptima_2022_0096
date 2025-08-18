@@ -11,7 +11,28 @@ use Illuminate\Support\Facades\Auth;
 class CategoryController extends Controller
 {
     /**
-     * Display a listing of the resource.
+     * @OA\Get(
+     *     path="/api/categories",
+     *     tags={"Categories"},
+     *     summary="List all categories",
+     *     @OA\Response(
+     *         response=200,
+     *         description="OK",
+     *         @OA\JsonContent(
+     *             type="object",
+     *             @OA\Property(
+     *                 property="categories",
+     *                 type="array",
+     *                 @OA\Items(
+     *                     type="object",
+     *                     @OA\Property(property="id", type="integer", example=1),
+     *                     @OA\Property(property="name", type="string", example="Breakfast")
+     *                 )
+     *             )
+     *         )
+     *     ),
+     *     @OA\Response(response=404, description="No categories found.")
+     * )
      */
     public function index()
     {
@@ -25,6 +46,42 @@ class CategoryController extends Controller
         ]);
     }
 
+    /**
+     * @OA\Get(
+     *     path="/api/categories/{id}/recipes",
+     *     tags={"Categories"},
+     *     summary="List recipes for a given category",
+     *     @OA\Parameter(
+     *         name="id", in="path", required=true, description="Category ID",
+     *         @OA\Schema(type="integer")
+     *     ),
+     *     @OA\Response(
+     *         response=200,
+     *         description="OK",
+     *         @OA\JsonContent(
+     *             type="object",
+     *             @OA\Property(property="category", type="string", example="Breakfast"),
+     *             @OA\Property(
+     *                 property="recipes",
+     *                 type="array",
+     *                 @OA\Items(
+     *                     type="object",
+     *                     @OA\Property(property="id", type="integer", example=10),
+     *                     @OA\Property(property="title", type="string", example="Keto Omelette"),
+     *                     @OA\Property(property="description", type="string", example="Eggs, cheese..."),
+     *                     @OA\Property(property="ingredients", type="string", example="eggs; cheese"),
+     *                     @OA\Property(property="instructions", type="string", example="Beat eggs..."),
+     *                     @OA\Property(property="user", type="object",
+     *                         @OA\Property(property="id", type="integer", example=3),
+     *                         @OA\Property(property="name", type="string", example="Jane Doe")
+     *                     )
+     *                 )
+     *             )
+     *         )
+     *     ),
+     *     @OA\Response(response=404, description="Category not found")
+     * )
+     */
      public function recipes($id)
     {
         $category = Category::with('recipes.user')
@@ -49,7 +106,33 @@ class CategoryController extends Controller
     }
 
     /**
-     * Store a newly created resource in storage.
+     * @OA\Post(
+     *     path="/api/categories",
+     *     tags={"Categories"},
+     *     summary="Create a new category (admin only)",
+     *     security={{"bearerAuth":{}}},
+     *     @OA\RequestBody(
+     *         required=true,
+     *         @OA\JsonContent(
+     *             required={"name"},
+     *             @OA\Property(property="name", type="string", maxLength=255, example="Dessert")
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=200,
+     *         description="Category created",
+     *         @OA\JsonContent(
+     *             type="object",
+     *             @OA\Property(property="message", type="string", example="Category created successfully"),
+     *             @OA\Property(property="category", type="object",
+     *                 @OA\Property(property="id", type="integer", example=5),
+     *                 @OA\Property(property="name", type="string", example="Dessert")
+     *             )
+     *         )
+     *     ),
+     *     @OA\Response(response=403, description="Only admins can create categories"),
+     *     @OA\Response(response=422, description="Validation error")
+     * )
      */
     public function store(Request $request)
     {
@@ -70,7 +153,28 @@ class CategoryController extends Controller
     }
 
     /**
-     * Display the specified resource.
+      * @OA\Get(
+     *     path="/api/categories/{id}",
+     *     tags={"Categories"},
+     *     summary="Get a single category",
+     *     @OA\Parameter(
+     *         name="id", in="path", required=true, description="Category ID",
+     *         @OA\Schema(type="integer")
+     *     ),
+     *     @OA\Response(
+     *         response=200,
+     *         description="OK",
+     *         @OA\JsonContent(
+     *             type="object",
+     *             @OA\Property(property="category",
+     *                 type="object",
+     *                 @OA\Property(property="id", type="integer", example=2),
+     *                 @OA\Property(property="name", type="string", example="Lunch")
+     *             )
+     *         )
+     *     ),
+     *     @OA\Response(response=404, description="Category not found")
+     * )
      */
     public function show($id)
     {
@@ -93,7 +197,36 @@ class CategoryController extends Controller
     }
 
     /**
-     * Update the specified resource in storage.
+     * @OA\Put(
+     *     path="/api/categories/{id}",
+     *     tags={"Categories"},
+     *     summary="Update a category (admin only)",
+     *     security={{"bearerAuth":{}}},
+     *     @OA\Parameter(
+     *         name="id", in="path", required=true, description="Category ID",
+     *         @OA\Schema(type="integer")
+     *     ),
+     *     @OA\RequestBody(
+     *         required=false,
+     *         @OA\JsonContent(
+     *             @OA\Property(property="name", type="string", maxLength=255, example="Dinner")
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=200,
+     *         description="Category updated",
+     *         @OA\JsonContent(
+     *             type="object",
+     *             @OA\Property(property="message", type="string", example="Category updated successfully"),
+     *             @OA\Property(property="category", type="object",
+     *                 @OA\Property(property="id", type="integer", example=2),
+     *                 @OA\Property(property="name", type="string", example="Dinner")
+     *             )
+     *         )
+     *     ),
+     *     @OA\Response(response=403, description="Only admins can update categories"),
+     *     @OA\Response(response=422, description="Validation error")
+     * )
      */
     public function update(Request $request, Category $category)
     {
@@ -114,7 +247,25 @@ class CategoryController extends Controller
     }
 
     /**
-     * Remove the specified resource from storage.
+    * @OA\Delete(
+     *     path="/api/categories/{id}",
+     *     tags={"Categories"},
+     *     summary="Delete a category (admin only)",
+     *     security={{"bearerAuth":{}}},
+     *     @OA\Parameter(
+     *         name="id", in="path", required=true, description="Category ID",
+     *         @OA\Schema(type="integer")
+     *     ),
+     *     @OA\Response(
+     *         response=200,
+     *         description="Category deleted",
+     *         @OA\JsonContent(
+     *             type="object",
+     *             @OA\Property(property="message", type="string", example="Category deleted successfully")
+     *         )
+     *     ),
+     *     @OA\Response(response=403, description="Only admins can delete categories")
+     * )
      */
     public function destroy(Category $category)
     {
