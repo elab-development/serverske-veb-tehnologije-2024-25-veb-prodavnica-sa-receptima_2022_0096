@@ -1541,14 +1541,14 @@
                 ]
             }
                 },
-        "/users/{id}/favorites": {
+        "/api/users/{id}/favorites": {
             "get": {
                 "tags": [
                     "Users"
                 ],
                 "summary": "Get all favorites of a specific user (Admin only)",
                 "description": "Returns a list of all favorites for the given user ID. Accessible only to admins.",
-                "operationId": "ad6b22851b43620159017c197a079645",
+                "operationId": "39e85338dc3cf77b81203e15453e52f8",
                 "parameters": [
                     {
                         "name": "id",

@@ -11,7 +11,7 @@ class UserController extends Controller
 {
      /**
      * @OA\Get(
-     *     path="/users/{id}/favorites",
+     *     path="/api/users/{id}/favorites",
      *     summary="Get all favorites of a specific user (Admin only)",
      *     description="Returns a list of all favorites for the given user ID. Accessible only to admins.",
      *     tags={"Users"},
