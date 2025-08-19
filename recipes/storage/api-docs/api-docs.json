@@ -1540,8 +1540,141 @@
                     }
                 ]
             }
+                },
+        "/users/{id}/favorites": {
+            "get": {
+                "tags": [
+                    "Users"
+                ],
+                "summary": "Get all favorites of a specific user (Admin only)",
+                "description": "Returns a list of all favorites for the given user ID. Accessible only to admins.",
+                "operationId": "ad6b22851b43620159017c197a079645",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "The ID of the user",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "example": 2
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "List of favorites for the user",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "user": {
+                                            "properties": {
+                                                "id": {
+                                                    "type": "integer",
+                                                    "example": 2
+                                                },
+                                                "name": {
+                                                    "type": "string",
+                                                    "example": "Allie Hane"
+                                                },
+                                                "email": {
+                                                    "type": "string",
+                                                    "example": "damore.dimitri@example.com"
+                                                }
+                                            },
+                                            "type": "object"
+                                        },
+                                        "favorites": {
+                                            "type": "array",
+                                            "items": {
+                                                "properties": {
+                                                    "id": {
+                                                        "type": "integer",
+                                                        "example": 1
+                                                    },
+                                                    "user": {
+                                                        "properties": {
+                                                            "id": {
+                                                                "type": "integer",
+                                                                "example": 2
+                                                            },
+                                                            "name": {
+                                                                "type": "string",
+                                                                "example": "Allie Hane"
+                                                            },
+                                                            "email": {
+                                                                "type": "string",
+                                                                "example": "damore.dimitri@example.com"
+                                                            }
+                                                        },
+                                                        "type": "object"
+                                                    },
+                                                    "recipe": {
+                                                        "properties": {
+                                                            "id": {
+                                                                "type": "integer",
+                                                                "example": 4
+                                                            },
+                                                            "title": {
+                                                                "type": "string",
+                                                                "example": "Chicken Curry"
+                                                            }
+                                                        },
+                                                        "type": "object"
+                                                    }
+                                                },
+                                                "type": "object"
+                                            }
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "403": {
+                        "description": "Only admins can view user favorites",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "error": {
+                                            "type": "string",
+                                            "example": "Only admins can view user favorites"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "User not found",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "error": {
+                                            "type": "string",
+                                            "example": "User not found"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
         }
     },
+    
     "components": {
         "securitySchemes": {
             "bearerAuth": {
@@ -1575,6 +1708,10 @@
         {
             "name": "Recipes",
             "description": "Recipes"
+              },
+        {
+            "name": "Users",
+            "description": "Users"
         }
     ]
 }
