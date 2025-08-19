@@ -571,6 +571,225 @@
                 ]
             }
         },
+          "/api/favorites": {
+            "get": {
+                "tags": [
+                    "Favorites"
+                ],
+                "summary": "List favorites for current user (admins see all)",
+                "operationId": "81123175f76259d611e2c337477dfa5f",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "favorites": {
+                                            "type": "array",
+                                            "items": {
+                                                "properties": {
+                                                    "id": {
+                                                        "type": "integer",
+                                                        "example": 10
+                                                    },
+                                                    "user": {
+                                                        "properties": {
+                                                            "id": {
+                                                                "type": "integer",
+                                                                "example": 3
+                                                            },
+                                                            "name": {
+                                                                "type": "string",
+                                                                "example": "Jane Doe"
+                                                            },
+                                                            "email": {
+                                                                "type": "string",
+                                                                "example": "jane@example.com"
+                                                            }
+                                                        },
+                                                        "type": "object"
+                                                    },
+                                                    "recipe": {
+                                                        "properties": {
+                                                            "id": {
+                                                                "type": "integer",
+                                                                "example": 42
+                                                            },
+                                                            "title": {
+                                                                "type": "string",
+                                                                "example": "Keto Omelette"
+                                                            },
+                                                            "description": {
+                                                                "type": "string",
+                                                                "example": "Eggs, cheese..."
+                                                            }
+                                                        },
+                                                        "type": "object"
+                                                    }
+                                                },
+                                                "type": "object"
+                                            }
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "No favorites found."
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            },
+            "post": {
+                "tags": [
+                    "Favorites"
+                ],
+                "summary": "Add a recipe to the current user's favorites (users only)",
+                "operationId": "370ffab0458b21c048b584dc20d059e0",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "recipe_id"
+                                ],
+                                "properties": {
+                                    "recipe_id": {
+                                        "type": "integer",
+                                        "example": 42
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Favorite added",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Favorite added successfully"
+                                        },
+                                        "favorite": {
+                                            "properties": {
+                                                "id": {
+                                                    "type": "integer",
+                                                    "example": 11
+                                                },
+                                                "user": {
+                                                    "properties": {
+                                                        "id": {
+                                                            "type": "integer",
+                                                            "example": 3
+                                                        },
+                                                        "name": {
+                                                            "type": "string",
+                                                            "example": "Jane Doe"
+                                                        }
+                                                    },
+                                                    "type": "object"
+                                                },
+                                                "recipe": {
+                                                    "properties": {
+                                                        "id": {
+                                                            "type": "integer",
+                                                            "example": 42
+                                                        },
+                                                        "title": {
+                                                            "type": "string",
+                                                            "example": "Keto Omelette"
+                                                        }
+                                                    },
+                                                    "type": "object"
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "403": {
+                        "description": "Only users can create favorites"
+                    },
+                    "409": {
+                        "description": "Recipe already in favorites"
+                    },
+                    "422": {
+                        "description": "Validation error"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/favorites/{id}": {
+            "delete": {
+                "tags": [
+                    "Favorites"
+                ],
+                "summary": "Remove a favorite (only the owner, role=user)",
+                "operationId": "1c74b9dcf3dbb9ab86d36911517fc025",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "Favorite ID",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Favorite removed",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Favorite removed successfully"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "403": {
+                        "description": "Only users can delete favorites / You can only delete your own favorites"
+                    },
+                    "404": {
+                        "description": "Favorite not found"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
         "/api/ping": {
             "get": {
                 "tags": [
@@ -585,6 +804,156 @@
                 }
             }
              },
+               "/api/keto/categories": {
+            "get": {
+                "tags": [
+                    "Keto"
+                ],
+                "summary": "List keto categories (RapidAPI - Keto Diet)",
+                "description": "Proxies the Keto Diet API categories endpoint.",
+                "operationId": "ee2906ee770ae0aaef3c91ced66cd645",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "properties": {
+                                            "id": {
+                                                "type": "integer",
+                                                "example": 2
+                                            },
+                                            "name": {
+                                                "type": "string",
+                                                "example": "Breakfast"
+                                            },
+                                            "slug": {
+                                                "type": "string",
+                                                "example": "breakfast"
+                                            }
+                                        },
+                                        "type": "object"
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "502": {
+                        "description": "Upstream API error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Keto API error"
+                                        },
+                                        "status": {
+                                            "type": "integer",
+                                            "example": 500
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/keto/recipes": {
+            "get": {
+                "tags": [
+                    "Keto"
+                ],
+                "summary": "List keto recipes by category (RapidAPI - Keto Diet)",
+                "description": "Proxies the Keto Diet API root endpoint with a 'category' query (e.g., /?category=2).",
+                "operationId": "01c8d2fba5179df8a01f12522c7e5af8",
+                "parameters": [
+                    {
+                        "name": "category",
+                        "in": "query",
+                        "description": "Category ID from Keto Diet API (e.g., 2)",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "minimum": 1,
+                            "example": 2
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "properties": {
+                                            "id": {
+                                                "type": "integer",
+                                                "example": 101
+                                            },
+                                            "title": {
+                                                "type": "string",
+                                                "example": "Keto Omelette"
+                                            },
+                                            "description": {
+                                                "type": "string",
+                                                "example": "Eggs, cheese..."
+                                            },
+                                            "ingredients": {
+                                                "type": "string",
+                                                "example": "eggs; cheese"
+                                            },
+                                            "instructions": {
+                                                "type": "string",
+                                                "example": "Beat eggs..."
+                                            },
+                                            "image": {
+                                                "type": "string",
+                                                "example": "https://.../image.jpg"
+                                            },
+                                            "category_id": {
+                                                "type": "integer",
+                                                "example": 2
+                                            }
+                                        },
+                                        "type": "object"
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Validation error (missing or invalid category)"
+                    },
+                    "502": {
+                        "description": "Upstream API error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Keto API error"
+                                        },
+                                        "status": {
+                                            "type": "integer",
+                                            "example": 500
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
         "/api/recipes": {
             "get": {
                 "tags": [
@@ -1192,8 +1561,16 @@
             "description": "Categories"
         },
         {
+            "name": "Favorites",
+            "description": "Favorites"
+        },
+        {
             "name": "Health",
             "description": "Health"
+        },
+         {
+            "name": "Keto",
+            "description": "Keto"
         },
         {
             "name": "Recipes",
